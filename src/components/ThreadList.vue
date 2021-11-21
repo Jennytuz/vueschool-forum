@@ -8,7 +8,7 @@
             <router-link :to="{name: 'ThreadShow', params: {id: thread.id}}">{{ thread.title }}</router-link>
           </p>
           <p class="text-faded text-xsmall">
-            <a href="#">{{getUser(thread.userId, 'name')}}</a>, {{ thread.publishedAt }}.
+            <a href="#">{{getUser(thread.userId, 'name')}}</a>, <app-date :timestamp="thread.publishedAt"/>.
           </p>
         </div>
 
@@ -25,7 +25,9 @@
             <p class="text-xsmall">
               <a href="profile.html">{{getUser(thread.userId, 'name')}}e</a>
             </p>
-            <p class="text-xsmall text-faded">{{ thread.publishedAt }}</p>
+            <p class="text-xsmall text-faded">
+              <app-date :timestamp="thread.publishedAt"/>
+            </p>
           </div>
         </div>
       </div>
