@@ -5,14 +5,16 @@ module.export = {
   },
   "extends": [
     "plugin:vue/vue3-essential",
-    "eslint:recommended"
+    '@vue/standard'
   ],
   "parserOptions": {
-    "parser": "@babel/eslint-parser",
+    "parser": "eslint-parser",
+    "ecmaVersion": 7,
     "sourceType": "module",
-    "ecmaVersion": 6,
   },
   "rules": {
-    "no-unused-vars": process.env.NODE_ENV === 'production'? 'error': 'warn'
+    "no-unused-vars": process.env.NODE_ENV === 'production'? 'error': 'warn',
+    "no-console": process.env.NODE_ENV === 'production'? 'warn': 'off',
+    "no-debugger": process.env.NODE_ENV === 'production'? 'warn': 'off',
   }
 }
