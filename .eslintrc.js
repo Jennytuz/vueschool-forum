@@ -1,4 +1,4 @@
-module.export = {
+module.exports = {
   "root": true,
   "env": {
     "node": true
@@ -8,7 +8,6 @@ module.export = {
     '@vue/standard'
   ],
   "parserOptions": {
-    "parser": "eslint-parser",
     "ecmaVersion": 7,
     "sourceType": "module",
   },
