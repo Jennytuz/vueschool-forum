@@ -1,21 +1,20 @@
 <template>
-  <div>
-    <h1>Welcome to forum</h1>
+  <div class="col-full">
+    <h1 class="push-top">Welcome to the Forum</h1>
     <CategoryList :categories="categories"/>
   </div>
 </template>
 <script>
-import sourceData from '@/data.json/'
 import CategoryList from '@/components/CategoryList'
 export default {
   components: { CategoryList },
   data () {
     return {
-      categories: sourceData.categories,
-      forums: sourceData.forums,
-      threads: sourceData.threads,
-      posts: sourceData.posts,
-      users: sourceData.users
+    }
+  },
+  computed: {
+    categories () {
+      return this.$store.state.categories
     }
   }
 }

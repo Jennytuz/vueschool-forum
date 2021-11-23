@@ -6,7 +6,6 @@
   </div>
 </template>
 <script>
-import sourceData from '@/data.json/'
 import PostList from '@/components/PostList'
 import PostEditor from '@/components/PostEditor'
 export default {
@@ -20,11 +19,15 @@ export default {
   components: { PostList, PostEditor },
   data () {
     return {
-      threads: sourceData.threads,
-      posts: sourceData.posts,
     }
   },
   computed: {
+    posts () {
+      return this.$store.state.posts
+    },
+    threads() {
+      return this.$store.state.threads
+    },
     thread () {
       return this.threads.find(thread => thread.id === this.id)
     },
@@ -33,9 +36,12 @@ export default {
     }
   },
   methods: {
-    addPost(post) {
-      this.posts.push({ ...post, threadId: this.id })
-      this.thread.posts.push(post.id)
+    addPost(eventData) {
+      const post = {
+        ...eventData,
+        threadId: this.id
+      }
+      this.$store.dispatch('createPost', post)
     }
   }
 }

@@ -20,12 +20,8 @@ export default {
   },
   methods: {
     save () {
-      const postId = 'dfafa' + Math.random()
       const post = {
-        id: postId,
-        text: this.text,
-        publishedAt: Math.floor(Date.now() / 1000),
-        userId: 'ALXhxjwgY9PinwNGHpfai6OWyDu2'
+        text: this.text
       }
       this.$emit('save', post)
       this.text = ''

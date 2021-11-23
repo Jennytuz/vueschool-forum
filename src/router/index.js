@@ -3,6 +3,7 @@ import Home from '@/pages/Home'
 import Forum from '@/pages/Forum'
 import Category from '@/pages/Category'
 import ThreadShow from '@/pages/ThreadShow'
+import Profile from '@/pages/Profile'
 import NotFound from '@/pages/NotFound'
 import sourceData from '@/data.json'
 
@@ -40,6 +41,18 @@ const routes = [
       }
     }
   }, {
+    path: '/profile',
+    name: 'Profile',
+    component: Profile,
+    meta: { toTop: true, smoothScroll: true }
+  }, {
+    path: '/profile/edit',
+    name: 'ProfileEdit',
+    component: Profile,
+    props: {
+      edit: true
+    }
+  }, {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: NotFound
@@ -48,5 +61,12 @@ const routes = [
 
 export default createRouter({
   history: createWebHistory(),
-  routes
+  routes,
+  scrollBehavior (to) {
+    console.log(to)
+    const scroll = {}
+    if (to.meta.toTop) scroll.top = 0
+    if (to.meta.smoothScroll) scroll.behavior = 'smooth'
+    return scroll
+  }
 })

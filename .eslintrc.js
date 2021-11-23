@@ -8,12 +8,14 @@ module.exports = {
     '@vue/standard'
   ],
   "parserOptions": {
+    "parser": "@babel/eslint-parser",
     "ecmaVersion": 7,
-    "sourceType": "module",
+    "sourceType": "module"
   },
   "rules": {
     "no-unused-vars": process.env.NODE_ENV === 'production'? 'error': 'warn',
     "no-console": process.env.NODE_ENV === 'production'? 'warn': 'off',
     "no-debugger": process.env.NODE_ENV === 'production'? 'warn': 'off',
+    "no-parsing-error": process.env.NODE_ENV === 'production'? 'warn': 'off'
   }
 }
