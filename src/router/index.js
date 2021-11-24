@@ -3,6 +3,7 @@ import Home from '@/pages/Home'
 import Forum from '@/pages/Forum'
 import Category from '@/pages/Category'
 import ThreadShow from '@/pages/ThreadShow'
+import ThreadCreate from '@/pages/ThreadCreate'
 import Profile from '@/pages/Profile'
 import NotFound from '@/pages/NotFound'
 import sourceData from '@/data.json'
@@ -41,6 +42,11 @@ const routes = [
       }
     }
   }, {
+    path: '/forum/:id/thread/create',
+    name: 'ThreadCreate',
+    component: ThreadCreate,
+    props: true
+  }, {
     path: '/profile',
     name: 'Profile',
     component: Profile,
@@ -63,7 +69,6 @@ export default createRouter({
   history: createWebHistory(),
   routes,
   scrollBehavior (to) {
-    console.log(to)
     const scroll = {}
     if (to.meta.toTop) scroll.top = 0
     if (to.meta.smoothScroll) scroll.behavior = 'smooth'
