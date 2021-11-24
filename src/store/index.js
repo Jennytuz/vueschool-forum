@@ -1,5 +1,6 @@
 import { createStore } from 'vuex'
 import sourceData from '@/data.json'
+import { findById, upsert } from '@/helpers'
 
 export default createStore({
   state: {
@@ -8,19 +9,19 @@ export default createStore({
   },
   getters: {
     authUser: state => {
-      const user = state.users.find(user => user.id === state.authId)
+      const user = findById(state.users, state.authId)
       if (!user) return null
       return {
         ...user,
         // authUser.posts
         get posts () {
-          return state.posts.filter(post => post.userId === user.id)
+          return findById(state.posts, user.id)
         },
         get postsCount () {
           return this.posts.length
         },
         get threads () {
-          return state.threads.filter(thread => thread.userId === user.id)
+          return findById(state.threads, user.id)
         },
         get threadsCount () {
           return this.threads.length
@@ -47,29 +48,41 @@ export default createStore({
       commit('appendThreadToUser', { userId, threadId: id })
       return state.threads.find(thread => thread.id === id)
     },
+    async updateThread ({ commit, state }, { text, title, threadId }) {
+      const thread = findById(state.threads, threadId)
+      const post = state.posts.find(post => post.id === thread.posts[0])
+      const newThread = { ...thread, title }
+      const newPost = {
+        ...post,
+        text
+      }
+      commit('setThread', { thread: newThread })
+      commit('setPost', { post: newPost })
+      return newThread
+    },
     updateUser ({ commit }, user) {
       commit('setUser', { user, userId: user.id })
     }
   },
   mutations: {
     setPost (state, { post }) {
-      state.posts.push(post)
+      upsert(state.posts, post)
     },
     setThread (state, { thread }) {
-      state.threads.push(thread)
+      upsert(state.threads, thread)
     },
     appendPostToThread (state, { postId, threadId }) {
-      const thread = state.threads.find(thread => thread.id === threadId)
+      const thread = findById(state.threads, threadId)
       thread.posts = thread.posts || []
       thread.posts.push(postId)
     },
     appendThreadToForum (state, { threadId, forumId }) {
-      const forum = state.forums.find(forum => forum.id === forumId)
+      const forum = findById(state.forums, forumId)
       forum.threads = forum.threads || []
       forum.threads.push(threadId)
     },
     appendThreadToUser (state, { threadId, userId }) {
-      const user = state.users.find(user => user.id === userId)
+      const user = findById(state.users, userId)
       user.threads = user.threads || []
       user.threads.push(threadId)
     },

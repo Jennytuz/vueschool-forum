@@ -1,6 +1,12 @@
 <template>
   <div class="col-large push-top">
-    <h1>{{ thread.title }}</h1>
+    <h1>{{ thread.title }}
+      <router-link
+        :to="{ name: 'ThreadEdit', id: thread.id }"
+        class="btn-green btn-small"
+        tag="button"
+      >Edit</router-link>
+    </h1>
     <post-list :posts="threadPosts" />
     <post-editor @save="addPost" />
   </div>
@@ -25,7 +31,7 @@ export default {
     posts () {
       return this.$store.state.posts
     },
-    threads() {
+    threads () {
       return this.$store.state.threads
     },
     thread () {
@@ -36,7 +42,7 @@ export default {
     }
   },
   methods: {
-    addPost(eventData) {
+    addPost (eventData) {
       const post = {
         ...eventData,
         threadId: this.id

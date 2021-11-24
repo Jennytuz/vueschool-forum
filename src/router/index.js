@@ -4,6 +4,7 @@ import Forum from '@/pages/Forum'
 import Category from '@/pages/Category'
 import ThreadShow from '@/pages/ThreadShow'
 import ThreadCreate from '@/pages/ThreadCreate'
+import ThreadEdit from '@/pages/ThreadEdit'
 import Profile from '@/pages/Profile'
 import NotFound from '@/pages/NotFound'
 import sourceData from '@/data.json'
@@ -45,6 +46,11 @@ const routes = [
     path: '/forum/:id/thread/create',
     name: 'ThreadCreate',
     component: ThreadCreate,
+    props: true
+  }, {
+    path: '/thread/:id/edit',
+    name: 'ThreadEdit',
+    component: ThreadEdit,
     props: true
   }, {
     path: '/profile',
