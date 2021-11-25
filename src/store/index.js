@@ -1,11 +1,15 @@
 import { createStore } from 'vuex'
-import sourceData from '@/data.json'
+import firebase from 'firebase'
 import { findById, upser } from '@/helpers'
 
 export default createStore({
   state: {
-    ...sourceData,
-    authId: 'VXjpr2WHa8Ux4Bnggym8QFLdv5C3'
+    authId: 'VXjpr2WHa8Ux4Bnggym8QFLdv5C3',
+    categories: [],
+    threads: [],
+    forums: [],
+    posts: [],
+    users: []
   },
   getters: {
     authUser: (state, getters) => {
@@ -39,6 +43,7 @@ export default createStore({
         return {
           ...thread,
           get author () {
+            console.log(state.users, thread.userId)
             return findById(state.users, thread.userId)
           },
           get repliesCount () {
@@ -85,6 +90,45 @@ export default createStore({
     },
     updateUser ({ commit }, user) {
       commit('setUser', { user, userId: user.id })
+    },
+    fetchThread ({ commit }, { id }) {
+      return new Promise((resolve) => {
+        firebase
+          .firestore()
+          .collection('threads')
+          .doc(id)
+          .onSnapshot((doc) => {
+            const thread = { ...doc.data(), id: doc.id }
+            commit('setThread', { thread })
+            resolve(thread)
+          })
+      })
+    },
+    fetchUser ({ commit }, { id }) {
+      return new Promise((resolve) => {
+        firebase
+          .firestore()
+          .collection('users')
+          .doc(id)
+          .onSnapshot((doc) => {
+            const user = { ...doc.data(), id: doc.id }
+            commit('setUser', { user })
+            resolve(user)
+          })
+      })
+    },
+    fetchPost ({ commit }, { id }) {
+      return new Promise((resolve) => {
+        firebase
+          .firestore()
+          .collection('posts')
+          .doc(id)
+          .onSnapshot((doc) => {
+            const post = { ...doc.data(), id: doc.id }
+            commit('setPost', { post })
+            resolve(post)
+          })
+      })
     }
   },
   mutations: {
@@ -92,11 +136,11 @@ export default createStore({
       upser(state.posts, post)
     },
     setThread (state, { thread }) {
+      console.log('=====')
       upser(state.threads, thread)
     },
-    setUser (state, { user, userId }) {
-      const userIndex = state.users.findIndex(user => user.id === userId)
-      state.users[userIndex] = user
+    setUser (state, { user }) {
+      upser(state.users, user)
     },
     appendPostToThread: makeAppendChildToParentMutation({ parent: 'threads', child: 'posts' }),
     appendThreadToForum: makeAppendChildToParentMutation({ parent: 'forums', child: 'threads' }),

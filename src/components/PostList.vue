@@ -1,7 +1,7 @@
 <template>
   <div class="post-list">
     <div v-for="post in posts" :key="post.id" class="post">
-      <div class="user-info">
+      <div class="user-info" v-if="getUser(post.userId, 'name')">
         <a href="#" class="user-name">{{getUser(post.userId, 'name')}}</a>
         <a href="#">
           <img class="avatar-large" :src="getUser(post.userId, 'avatar')" alt />

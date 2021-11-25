@@ -1,14 +1,21 @@
 <template>
   <div class="col-large push-top">
-    <h1>{{ thread.title }}
+    <h1>
+      {{ thread.title }}
       <router-link
         :to="{ name: 'ThreadEdit', id: thread.id }"
         class="btn-green btn-small"
         tag="button"
       >Edit</router-link>
     </h1>
-    <p> By <a href="#" class="link-unstyled">{{ thread.author.name}}</a>, <app-date :timestamp="thread.publishedAt" />.
-      <span style="float:right; margin-top: 2px;" class="hide-mobile text-faded text-small">{{thread.repliesCount}} replies by {{thread.contributorCount}} contributors</span>
+    <p>
+      By
+      <a href="#" class="link-unstyled">{{ thread.author?.name}}</a>,
+      <app-date :timestamp="thread.publishedAt" />.
+      <span
+        style="float:right margin-top: 2px"
+        class="hide-mobile text-faded text-small"
+      >{{thread.repliesCount}} replies by {{thread.contributorCount}} contributors</span>
     </p>
     <post-list :posts="threadPosts" />
     <post-editor @save="addPost" />
@@ -18,6 +25,7 @@
 import PostList from '@/components/PostList'
 import PostEditor from '@/components/PostEditor'
 import AppDate from '@/components/AppDate.vue'
+
 export default {
   name: 'ThreadShow',
   props: {
@@ -28,8 +36,7 @@ export default {
   },
   components: { PostList, PostEditor, AppDate },
   data () {
-    return {
-    }
+    return {}
   },
   computed: {
     posts () {
@@ -42,7 +49,7 @@ export default {
       return this.$store.getters.thread(this.id)
     },
     threadPosts () {
-      return this.posts.filter(post => post.threadId === this.id)
+      return this.posts.filter((post) => post.threadId === this.id)
     }
   },
   methods: {
@@ -53,6 +60,15 @@ export default {
       }
       this.$store.dispatch('createPost', post)
     }
+  },
+  async created () {
+    const thread = await this.$store.dispatch('fetchThread', { id: this.id })
+    this.$store.dispatch('fetchUser', { id: thread.userId })
+
+    thread.posts.forEach(async (postId) => {
+      const post = await this.$store.dispatch('fetchPost', { id: postId })
+      this.$store.dispatch('fetchUser', { id: post.userId })
+    })
   }
 }
 </script>
