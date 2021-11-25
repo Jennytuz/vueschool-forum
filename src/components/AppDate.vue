@@ -1,7 +1,7 @@
 <template>
-  <div :title="humanFriendlyDate()">
+  <span :title="humanFriendlyDate()">
     {{ diffForHumans() }}
-  </div>
+  </span>
 </template>
 
 <script>

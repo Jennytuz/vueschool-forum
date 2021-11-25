@@ -6,7 +6,8 @@
         <a href="#">
           <img class="avatar-large" :src="getUser(post.userId, 'avatar')" alt />
         </a>
-        <p class="desktop-only text-small">107 posts</p>
+        <p class="desktop-only text-small">{{getUser(post.userId, 'postsCount')}} posts</p>
+         <p class="desktop-only text-small">{{getUser(post.userId, 'threadsCount')}} threads</p>
       </div>
 
       <div class="post-content">
@@ -23,9 +24,7 @@
     </div>
   </div>
 </template>
-
 <script>
-
 export default {
   props: {
     posts: {
@@ -40,7 +39,7 @@ export default {
   },
   methods: {
     getUser (userId, rtn) {
-      return this.users.find((u) => u.id === userId)[rtn]
+      return this.$store.getters.user(userId)[rtn]
     }
   }
 }
