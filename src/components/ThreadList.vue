@@ -57,7 +57,7 @@ export default {
       return this.posts.find((p) => p.id === postId)[rtn]
     },
     getUser (userId, rtn) {
-      return this.users.find((u) => u.id === userId)[rtn]
+      return this.users.find((u) => u.id === userId) ? this.users.find((u) => u.id === userId)[rtn] : {}
     }
   }
 }

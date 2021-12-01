@@ -40,10 +40,10 @@ export default createStore({
     thread: state => {
       return (id) => {
         const thread = findById(state.threads, id)
+        if (!thread) return {}
         return {
           ...thread,
           get author () {
-            console.log(state.users, thread.userId)
             return findById(state.users, thread.userId)
           },
           get repliesCount () {
@@ -100,6 +100,9 @@ export default createStore({
     fetchPost ({ dispatch }, { id }) {
       return dispatch('fetchItem', { resource: 'posts', id, emoji: '🔥' })
     },
+    fetchForum ({ dispatch }, { id }) {
+      return dispatch('fetchItem', { resource: 'forums', id, emoji: '' })
+    },
     fetchPosts ({ dispatch }, { ids }) {
       return dispatch('fetchItems', { resource: 'posts', ids, emoji: '🔥' })
     },
@@ -108,6 +111,21 @@ export default createStore({
     },
     fetchThreads ({ dispatch }, { ids }) {
       return dispatch('fetchItems', { resource: 'threads', ids, emoji: '🍑' })
+    },
+    fetchForums ({ dispatch }, { ids }) {
+      return dispatch('fetchItems', { resource: 'forums', ids, emoji: '' })
+    },
+    fetchAllCategories ({ commit }) {
+      return new Promise((resolve) => {
+        firebase.firestore().collection('categories').onSnapshot((querySnapshot) => {
+          const categories = querySnapshot.docs.map(doc => {
+            const item = { id: doc.id, ...doc.data() }
+            commit('setItem', { resource: 'categories', item })
+            return item
+          })
+          resolve(categories)
+        })
+      })
     },
     fetchItem ({ commit }, { id, emoji, resource }) {
       console.log(emoji, id)
