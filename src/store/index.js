@@ -61,7 +61,7 @@ export default createStore({
       post.id = 'dfafa' + Math.random()
       post.userId = state.authId
       post.publishedAt = Math.floor(Date.now() / 1000)
-      commit('setPost', { post })
+      commit('setItem', { resource: 'posts', item: post })
       commit('appendPostToThread', { childId: post.id, parentId: post.threadId })
       commit('appendContributorToThread', { childId: state.authId, parentId: post.threadId })
     },
@@ -70,7 +70,7 @@ export default createStore({
       const userId = state.authId
       const publishedAt = Math.floor(Date.now() / 1000)
       const thread = { forumId, publishedAt, title, userId, id, text }
-      commit('setThread', { thread })
+      commit('setItem', { resource: 'threads', item: thread })
       dispatch('createPost', { text, threadId: id })
       commit('appendThreadToForum', { childId: id, parentId: forumId })
       commit('appendThreadToUser', { childId: id, parentId: userId })
@@ -84,63 +84,52 @@ export default createStore({
         ...post,
         text
       }
-      commit('setThread', { thread: newThread })
-      commit('setPost', { post: newPost })
+      commit('setItem', { resource: 'threads', item: newThread })
+      commit('setItem', { resource: 'posts', item: newPost })
       return newThread
     },
     updateUser ({ commit }, user) {
-      commit('setUser', { user, userId: user.id })
+      commit('setItem', { resource: 'users', item: user })
     },
-    fetchThread ({ commit }, { id }) {
+    fetchThread ({ dispatch }, { id }) {
+      return dispatch('fetchItem', { resource: 'threads', id, emoji: '🍑' })
+    },
+    fetchUser ({ dispatch }, { id }) {
+      return dispatch('fetchItem', { resource: 'users', id, emoji: '🙋🏻‍♀️' })
+    },
+    fetchPost ({ dispatch }, { id }) {
+      return dispatch('fetchItem', { resource: 'posts', id, emoji: '🔥' })
+    },
+    fetchPosts ({ dispatch }, { ids }) {
+      return dispatch('fetchItems', { resource: 'posts', ids, emoji: '🔥' })
+    },
+    fetchUsers ({ dispatch }, { ids }) {
+      return dispatch('fetchItems', { resource: 'users', ids, emoji: '🙋🏻‍♀️' })
+    },
+    fetchThreads ({ dispatch }, { ids }) {
+      return dispatch('fetchItems', { resource: 'threads', ids, emoji: '🍑' })
+    },
+    fetchItem ({ commit }, { id, emoji, resource }) {
+      console.log(emoji, id)
       return new Promise((resolve) => {
         firebase
           .firestore()
-          .collection('threads')
+          .collection(resource)
           .doc(id)
           .onSnapshot((doc) => {
-            const thread = { ...doc.data(), id: doc.id }
-            commit('setThread', { thread })
-            resolve(thread)
+            const item = { ...doc.data(), id: doc.id }
+            commit('setItem', { resource, id, item })
+            resolve(item)
           })
       })
     },
-    fetchUser ({ commit }, { id }) {
-      return new Promise((resolve) => {
-        firebase
-          .firestore()
-          .collection('users')
-          .doc(id)
-          .onSnapshot((doc) => {
-            const user = { ...doc.data(), id: doc.id }
-            commit('setUser', { user })
-            resolve(user)
-          })
-      })
-    },
-    fetchPost ({ commit }, { id }) {
-      return new Promise((resolve) => {
-        firebase
-          .firestore()
-          .collection('posts')
-          .doc(id)
-          .onSnapshot((doc) => {
-            const post = { ...doc.data(), id: doc.id }
-            commit('setPost', { post })
-            resolve(post)
-          })
-      })
+    fetchItems ({ dispatch }, { ids, emoji, resource }) {
+      return Promise.all(ids.map(id => dispatch('fetchItem', { id, emoji, resource })))
     }
   },
   mutations: {
-    setPost (state, { post }) {
-      upser(state.posts, post)
-    },
-    setThread (state, { thread }) {
-      console.log('=====')
-      upser(state.threads, thread)
-    },
-    setUser (state, { user }) {
-      upser(state.users, user)
+    setItem (state, { resource, item }) {
+      upser(state[resource], item)
     },
     appendPostToThread: makeAppendChildToParentMutation({ parent: 'threads', child: 'posts' }),
     appendThreadToForum: makeAppendChildToParentMutation({ parent: 'forums', child: 'threads' }),
