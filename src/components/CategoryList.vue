@@ -1,5 +1,5 @@
 <template>
-  <div class="col-full">
+  <div class="col-full" v-if="categories">
     <forum-list
       v-for="category in categories"
       :key="category.id"

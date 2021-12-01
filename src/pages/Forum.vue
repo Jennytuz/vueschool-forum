@@ -1,5 +1,5 @@
 <template>
-  <div class="col-full" v-if="forum">
+  <div class="col-full" v-if="forum && threads">
     <div class="col-full push-top">
       <div class="forum-header">
         <div class="forum-details">
@@ -10,7 +10,7 @@
       </div>
     </div>
 
-    <div class="col-full push-top">
+    <div class="col-full push-top" v-if="threads && threads[0]">
       <thread-list :threads="threads"/>
     </div>
   </div>
@@ -18,6 +18,7 @@
 
 <script>
 import ThreadList from '@/components/ThreadList.vue'
+import { mapActions } from 'vuex'
 
 export default {
   components: { ThreadList },
@@ -36,10 +37,13 @@ export default {
       return this.forum.threads.map(threadId => this.$store.getters.thread(threadId))
     }
   },
+  methods: {
+    ...mapActions(['fetchUsers', 'fetchThreads', 'fetchForum'])
+  },
   async created () {
-    const forum = await this.$store.dispatch('fetchForum', { id: this.id })
-    const threads = await this.$store.dispatch('fetchThreads', { ids: forum.threads })
-    this.$store.dispatch('fetchUsers', { ids: threads.map(thread => thread.userId) })
+    const forum = await this.fetchForum({ id: this.id })
+    const threads = await this.fetchThreads({ ids: forum.threads })
+    this.fetchUsers({ ids: threads.map(thread => thread.userId) })
   }
 }
 </script>

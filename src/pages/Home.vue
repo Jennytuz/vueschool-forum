@@ -1,11 +1,12 @@
 <template>
   <div class="col-full">
     <h1 class="push-top">Welcome to the Forum</h1>
-    <CategoryList :categories="categories"/>
+    <CategoryList v-if="categories" :categories="categories"/>
   </div>
 </template>
 <script>
 import CategoryList from '@/components/CategoryList'
+import { mapActions } from 'vuex'
 export default {
   components: { CategoryList },
   data () {
@@ -17,26 +18,13 @@ export default {
       return this.$store.state.categories
     }
   },
-  async beforeCreate () {
-    const categories = await this.$store.dispatch('fetchAllCategories')
+  methods: {
+    ...mapActions(['fetchForums', 'fetchAllCategories'])
+  },
+  async created () {
+    const categories = await this.fetchAllCategories()
     const forumIds = categories.map(cate => cate.forums).flat()
-    this.$store.dispatch('fetchForums', { ids: forumIds })
-    console.log('before create', this.categories)
-  },
-  created () {
-    console.log('create', this.categories)
-  },
-  beforeMount () {
-    console.log('before mount', this.categories)
-  },
-  mounted () {
-    console.log('mounted', this.categories, this.$el)
-  },
-  beforeUnmount () {
-    console.log('beforeUnmount', this.categories, this.$el)
-  },
-  unmounted () {
-    console.log('unmounted', this.categories, this.$el) // why
+    this.fetchForums({ ids: forumIds })
   }
 }
 </script>

@@ -7,7 +7,6 @@ import ThreadCreate from '@/pages/ThreadCreate'
 import ThreadEdit from '@/pages/ThreadEdit'
 import Profile from '@/pages/Profile'
 import NotFound from '@/pages/NotFound'
-import sourceData from '@/data.json'
 
 const routes = [
   {
@@ -28,20 +27,20 @@ const routes = [
     path: '/thread/:id',
     name: 'ThreadShow',
     component: ThreadShow,
-    props: true,
-    beforeEnter (to, from, next) {
-      const threadExits = sourceData.threads.find(thread => thread.id === to.params.id)
-      if (threadExits) {
-        return next()
-      } else {
-        next({
-          name: 'NotFound',
-          params: { pathMatch: to.path.substring(1).split('/') },
-          hash: to.hash,
-          query: to.query
-        })
-      }
-    }
+    props: true
+    // beforeEnter (to, from, next) {
+    //   const threadExits = sourceData.threads.find(thread => thread.id === to.params.id)
+    //   if (threadExits) {
+    //     return next()
+    //   } else {
+    //     next({
+    //       name: 'NotFound',
+    //       params: { pathMatch: to.path.substring(1).split('/') },
+    //       hash: to.hash,
+    //       query: to.query
+    //     })
+    //   }
+    // }
   }, {
     path: '/forum/:id/thread/create',
     name: 'ThreadCreate',

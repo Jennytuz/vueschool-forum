@@ -5,7 +5,7 @@
       <div v-for="thread in threads" :key="thread.id" class="thread">
         <div>
           <p>
-            <router-link :to="{name: 'ThreadShow', params: {id: thread.id}}">{{ thread.title }}</router-link>
+            <router-link v-if="thread" :to="{name: 'ThreadShow', params: {id: thread.id}}">{{ thread.title }}</router-link>
           </p>
           <p class="text-faded text-xsmall">
             <a href="#">{{getUser(thread.userId, 'name')}}</a>, <app-date :timestamp="thread.publishedAt"/>.
