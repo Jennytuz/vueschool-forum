@@ -67,7 +67,7 @@ export default {
     const thread = await this.fetchThread({ id: this.id })
     const posts = await this.fetchPosts({ ids: thread.posts })
     const users = posts.map(post => post.userId).concat([thread.userId])
-    this.fetchUsers({ id: users })
+    this.fetchUsers({ ids: users })
   }
 }
 </script>

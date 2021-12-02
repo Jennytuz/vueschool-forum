@@ -1,8 +1,8 @@
-import { upser, findById } from '@/helpers'
+import { upser, findById, docToResource } from '@/helpers'
 
 export default {
   setItem (state, { resource, item }) {
-    upser(state[resource], item)
+    upser(state[resource], docToResource(item))
   },
   appendPostToThread: makeAppendChildToParentMutation({ parent: 'threads', child: 'posts' }),
   appendThreadToForum: makeAppendChildToParentMutation({ parent: 'forums', child: 'threads' }),

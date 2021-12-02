@@ -14,12 +14,10 @@ export default {
   components: { TheNavBar },
   name: 'App',
   methods: {
-    ...mapActions(['fetchUser'])
+    ...mapActions(['fetchAuthUser'])
   },
   created () {
-    console.log(this.$store.state.authId)
-    console.log('----=====-')
-    this.fetchUser(this.$store.state.authId)
+    this.fetchAuthUser()
   }
 }
 </script>

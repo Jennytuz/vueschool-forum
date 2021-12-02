@@ -1,41 +1,75 @@
 import firebase from 'firebase'
-import { findById } from '@/helpers'
+import { findById, docToResource } from '@/helpers'
 
 export default {
-  createPost ({ commit, state }, post) {
-    post.id = 'dfafa' + Math.random()
+  async createPost ({ commit, state }, post) {
     post.userId = state.authId
-    post.publishedAt = Math.floor(Date.now() / 1000)
-    commit('setItem', { resource: 'posts', item: post })
-    commit('appendPostToThread', { childId: post.id, parentId: post.threadId })
+    post.publishedAt = firebase.firestore.FieldValue.serverTimestamp()
+    const batch = firebase.firestore().batch()
+    const postRef = firebase.firestore().collection('posts').doc()
+    const threadRef = firebase.firestore().collection('threads').doc(post.threadId)
+    const userRef = firebase.firestore().collection('users').doc(state.authId)
+    batch.set(postRef, post)
+    batch.update(threadRef, {
+      posts: firebase.firestore.FieldValue.arrayUnion(postRef.id),
+      contributors: firebase.firestore.FieldValue.arrayUnion(state.authId)
+    })
+    batch.update(userRef, {
+      postsCount: firebase.firestore.FieldValue.increment(1)
+    })
+    await batch.commit()
+    const newPost = await postRef.get()
+    commit('setItem', { resource: 'posts', item: { ...newPost.data(), id: newPost.id } })
+    commit('appendPostToThread', { childId: newPost.id, parentId: post.threadId })
     commit('appendContributorToThread', { childId: state.authId, parentId: post.threadId })
   },
   async createThread ({ commit, state, dispatch }, { text, title, forumId }) {
-    const id = 'dfafads' + Math.random()
     const userId = state.authId
-    const publishedAt = Math.floor(Date.now() / 1000)
-    const thread = { forumId, publishedAt, title, userId, id, text }
-    commit('setItem', { resource: 'threads', item: thread })
-    dispatch('createPost', { text, threadId: id })
-    commit('appendThreadToForum', { childId: id, parentId: forumId })
-    commit('appendThreadToUser', { childId: id, parentId: userId })
-    return state.threads.find(thread => thread.id === id)
+    const publishedAt = firebase.firestore.FieldValue.serverTimestamp()
+    const batch = firebase.firestore().batch()
+    const threadRef = firebase.firestore().collection('threads').doc()
+    const thread = { forumId, publishedAt, title, userId, id: threadRef.id, text }
+    const userRef = firebase.firestore().collection('users').doc(userId)
+    const forumRef = firebase.firestore().collection('forums').doc(forumId)
+    batch.set(threadRef, thread)
+    batch.update(userRef, {
+      threads: firebase.firestore.FieldValue.arrayUnion(threadRef.id)
+    })
+    batch.update(forumRef, {
+      threads: firebase.firestore.FieldValue.arrayUnion(threadRef.id)
+    })
+    await batch.commit()
+    const newThread = await threadRef.get()
+    commit('setItem', { resource: 'threads', item: { ...newThread.data(), id: newThread.id } })
+    await dispatch('createPost', { text, threadId: newThread.id })
+    commit('appendThreadToForum', { childId: newThread.id, parentId: forumId })
+    commit('appendThreadToUser', { childId: newThread.id, parentId: userId })
+    return state.threads.find(thread => thread.id === newThread.id)
   },
   async updateThread ({ commit, state }, { text, title, threadId }) {
     const thread = findById(state.threads, threadId)
     const post = state.posts.find(post => post.id === thread.posts[0])
-    const newThread = { ...thread, title }
-    const newPost = {
+    let newThread = { ...thread, title }
+    let newPost = {
       ...post,
       text
     }
-    commit('setItem', { resource: 'threads', item: newThread })
-    commit('setItem', { resource: 'posts', item: newPost })
+    const batch = firebase.firestore().batch()
+    const threadRef = firebase.firestore().collection('threads').doc()
+    const postRef = firebase.firestore().collection('posts').doc(post.id)
+    batch.update(threadRef, newThread)
+    batch.update(postRef, newPost)
+    await batch.commit()
+    newThread = await threadRef.get()
+    newPost = await postRef.get()
+    commit('setItem', { resource: 'threads', item: docToResource(newThread) })
+    commit('setItem', { resource: 'posts', item: docToResource(newPost) })
     return newThread
   },
   updateUser ({ commit }, user) {
     commit('setItem', { resource: 'users', item: user })
   },
+  fetchAuthUser: ({ dispatch, state }) => dispatch('fetchItem', { resource: 'users', id: state.authId, emoji: '🙋🏻‍♀️' }),
   fetchThread: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'threads', id, emoji: 'Thread:::' }),
   fetchUser: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'users', id, emoji: '🙋🏻‍♀️' }),
   fetchPost: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'posts', id, emoji: 'Post:::' }),

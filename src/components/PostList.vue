@@ -39,7 +39,7 @@ export default {
   },
   methods: {
     getUser (userId, rtn) {
-      return this.$store.getters.user(userId)[rtn]
+      return this.$store.getters.user(userId) ? this.$store.getters.user(userId)[rtn] : {}
     }
   }
 }
