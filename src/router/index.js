@@ -7,7 +7,7 @@ import ThreadCreate from '@/pages/ThreadCreate'
 import ThreadEdit from '@/pages/ThreadEdit'
 import Profile from '@/pages/Profile'
 import NotFound from '@/pages/NotFound'
-
+import store from '@/store'
 const routes = [
   {
     path: '/',
@@ -28,19 +28,6 @@ const routes = [
     name: 'ThreadShow',
     component: ThreadShow,
     props: true
-    // beforeEnter (to, from, next) {
-    //   const threadExits = sourceData.threads.find(thread => thread.id === to.params.id)
-    //   if (threadExits) {
-    //     return next()
-    //   } else {
-    //     next({
-    //       name: 'NotFound',
-    //       params: { pathMatch: to.path.substring(1).split('/') },
-    //       hash: to.hash,
-    //       query: to.query
-    //     })
-    //   }
-    // }
   }, {
     path: '/forum/:id/thread/create',
     name: 'ThreadCreate',
@@ -69,8 +56,7 @@ const routes = [
     component: NotFound
   }
 ]
-
-export default createRouter({
+const router = createRouter({
   history: createWebHistory(),
   routes,
   scrollBehavior (to) {
@@ -80,3 +66,8 @@ export default createRouter({
     return scroll
   }
 })
+router.beforeEach(() => {
+  store.dispatch('unsubscribeAllSnapshots')
+})
+
+export default router

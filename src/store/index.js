@@ -10,7 +10,8 @@ export default createStore({
     threads: [],
     forums: [],
     posts: [],
-    users: []
+    users: [],
+    unsubscribes: []
   },
   getters,
   actions,

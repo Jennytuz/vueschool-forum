@@ -3,9 +3,8 @@ import App from './App.vue'
 import router from '@/router'
 import store from '@/store'
 import firebase from 'firebase'
-// Import the functions you need from the SDKs you need
-import { initializeApp } from 'firebase/app'
 import firebaseConfig from '@/config/firebase'
+import FontAwesome from '@/plugins/FontAwesome'
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 // Initialize Firebase
@@ -26,5 +25,6 @@ requireComponent.keys().forEach(function (fileName) {
 })
 forumApp.use(router)
 forumApp.use(store)
+forumApp.use(FontAwesome)
 
 forumApp.mount('#app')
