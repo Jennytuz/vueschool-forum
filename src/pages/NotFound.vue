@@ -11,8 +11,8 @@ export default {
 
     }
   },
-  init () {
-    console.log(this.$route.params)
+  created () {
+    this.$emit('ready')
   }
 }
 </script>

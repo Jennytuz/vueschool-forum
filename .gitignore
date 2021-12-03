@@ -23,3 +23,6 @@ pnpm-debug.log*
 *.sw?
 
 serviceAccount.json
+
+.env.*.local
+.env.local
