@@ -3,6 +3,7 @@ import Home from '@/pages/Home'
 import Forum from '@/pages/Forum'
 import Category from '@/pages/Category'
 import ThreadShow from '@/pages/ThreadShow'
+import Register from '@/pages/Register'
 import ThreadCreate from '@/pages/ThreadCreate'
 import ThreadEdit from '@/pages/ThreadEdit'
 import Profile from '@/pages/Profile'
@@ -50,6 +51,10 @@ const routes = [
     props: {
       edit: true
     }
+  }, {
+    path: '/register',
+    name: 'Register',
+    component: Register
   }, {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
