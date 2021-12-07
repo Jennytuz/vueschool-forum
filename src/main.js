@@ -9,7 +9,13 @@ import FontAwesome from '@/plugins/FontAwesome'
 // https://firebase.google.com/docs/web/setup#available-libraries
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig)
-
+firebase.auth().onAuthStateChanged(user => {
+  store.dispatch('unsubscribeAuthUserSnapshot')
+  if (user) {
+    console.log('有AuthUSER')
+    store.dispatch('fetchAuthUser')
+  }
+})
 const forumApp = createApp(App)
 
 const requireComponent = require.context('./components', true, /App[A-Z]\w+\.(vue|js)$/)

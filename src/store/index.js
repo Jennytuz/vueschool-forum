@@ -5,13 +5,14 @@ import mutations from '@/store/mutations'
 
 export default createStore({
   state: {
-    authId: 'VXjpr2WHa8Ux4Bnggym8QFLdv5C3',
+    authId: null,
     categories: [],
     threads: [],
     forums: [],
     posts: [],
     users: [],
-    unsubscribes: []
+    unsubscribes: [],
+    authUserUnsubscribes: []
   },
   getters,
   actions,
