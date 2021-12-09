@@ -3,16 +3,18 @@ import { findById, docToResource } from '@/helpers'
 
 export default {
   initAuthentication ({ dispatch, commit, state }) {
-    if (state.authObserverUnsubscribe) state.authObserverUnsubscribe()
+    if (state.authObserverUnsubscribe) return
     return new Promise((resolve) => {
-      const unsubscribe = firebase.auth().onAuthStateChanged(user => {
+      const unsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
         console.log('the user has changed')
         dispatch('unsubscribeAuthUserSnapshot')
         if (user) {
           console.log('有AuthUSER')
-          dispatch('fetchAuthUser')
+          await dispatch('fetchAuthUser')
+          resolve(user)
+        } else {
+          resolve(null)
         }
-        resolve(user)
       })
       commit('setAuthObserverUnsubscribe', unsubscribe)
     })
@@ -132,10 +134,10 @@ export default {
   updateUser ({ commit }, user) {
     commit('setItem', { resource: 'users', item: user })
   },
-  fetchAuthUser: ({ dispatch, commit, state }) => {
+  fetchAuthUser: async ({ dispatch, commit, state }) => {
     const userId = firebase.auth().currentUser?.uid
     if (!userId) return
-    dispatch('fetchItem', {
+    await dispatch('fetchItem', {
       resource: 'users',
       id: userId,
       emoji: '🙋🏻‍♀️🙋🏻‍♀️🙋🏻‍♀️',

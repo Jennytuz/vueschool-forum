@@ -11,8 +11,6 @@ export default {
     state.authUserUnsubscribe = unsubscribe
   },
   setAuthObserverUnsubscribe (state, unsubscribe) {
-    console.log('--')
-    console.log(unsubscribe)
     state.authObserverUnsubscribe = unsubscribe
   },
   appendUnsubscribe (state, { unsubscribe }) {
