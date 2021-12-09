@@ -3,6 +3,7 @@
     <h1>
       {{ thread.title }}
       <router-link
+        v-if="thread.userId === authUser?.id"
         :to="{ name: 'ThreadEdit', id: thread.id }"
         class="btn-green btn-small"
         tag="button"
@@ -18,14 +19,20 @@
       >{{thread.repliesCount}} replies by {{thread.contributorCount}} contributors</span>
     </p>
     <post-list :posts="threadPosts" />
-    <post-editor @save="addPost" />
+    <post-editor v-if="authUser" @save="addPost" />
+    <div v-else class="text-center" style="margin-bottom: 50px">
+      <router-link :to='{ name: "SignIn", query: { redirectTo: $route.path } }'>Sign In</router-link>
+      or
+      <router-link :to='{ name: "Register", query: { redirectTo: $route.path } }'>Register</router-link>
+      to reply!
+    </div>
   </div>
 </template>
 <script>
 import PostList from '@/components/PostList'
 import PostEditor from '@/components/PostEditor'
 import AppDate from '@/components/AppDate.vue'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import asyncDataStatus from '@/mixins/asyncDataStatus'
 
 export default {
@@ -42,6 +49,7 @@ export default {
     return {}
   },
   computed: {
+    ...mapGetters(['authUser']),
     posts () {
       return this.$store.state.posts
     },
