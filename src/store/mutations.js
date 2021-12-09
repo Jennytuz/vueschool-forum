@@ -2,9 +2,6 @@ import { upser, findById, docToResource } from '@/helpers'
 
 export default {
   setItem (state, { resource, item }) {
-    if (resource === 'users') {
-      console.log('setAuthUser信息')
-    }
     upser(state[resource], docToResource(item))
   },
   setAuthId (state, id) {
@@ -12,6 +9,11 @@ export default {
   },
   setAuthUserUnsubscribe (state, unsubscribe) {
     state.authUserUnsubscribe = unsubscribe
+  },
+  setAuthObserverUnsubscribe (state, unsubscribe) {
+    console.log('--')
+    console.log(unsubscribe)
+    state.authObserverUnsubscribe = unsubscribe
   },
   appendUnsubscribe (state, { unsubscribe }) {
     state.unsubscribes.push(unsubscribe)

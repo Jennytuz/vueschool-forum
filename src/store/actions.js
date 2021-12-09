@@ -2,6 +2,21 @@ import firebase from 'firebase'
 import { findById, docToResource } from '@/helpers'
 
 export default {
+  initAuthentication ({ dispatch, commit, state }) {
+    if (state.authObserverUnsubscribe) state.authObserverUnsubscribe()
+    return new Promise((resolve) => {
+      const unsubscribe = firebase.auth().onAuthStateChanged(user => {
+        console.log('the user has changed')
+        dispatch('unsubscribeAuthUserSnapshot')
+        if (user) {
+          console.log('有AuthUSER')
+          dispatch('fetchAuthUser')
+        }
+        resolve(user)
+      })
+      commit('setAuthObserverUnsubscribe', unsubscribe)
+    })
+  },
   async createPost ({ commit, state }, post) {
     post.userId = state.authId
     post.publishedAt = firebase.firestore.FieldValue.serverTimestamp()
@@ -128,7 +143,6 @@ export default {
         commit('setAuthUserUnsubscribe', unsubscribe)
       }
     })
-    console.log('fetchAuthUser信息')
     commit('setAuthId', userId)
   },
   fetchThread: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'threads', id, emoji: 'Thread:::' }),
@@ -154,25 +168,19 @@ export default {
     })
   },
   fetchItem ({ commit }, { id, emoji, resource, handleUnsubscribe = null }) {
-    // console.log(emoji, id)
     return new Promise((resolve) => {
       const unsubscribe = firebase
         .firestore()
         .collection(resource)
         .doc(id)
         .onSnapshot((doc) => {
-          console.log('on snapshot', resource, doc.data())
           const item = { ...doc.data(), id: doc.id }
-          if (resource === 'users') {
-            console.log(item)
-          }
           commit('setItem', { resource, id, item })
           resolve(item)
         })
-      if(handleUnsubscribe) {
+      if (handleUnsubscribe) {
         handleUnsubscribe(unsubscribe)
-      }
-      else {
+      } else {
         commit('appendUnsubscribe', { unsubscribe })
       }
     })
@@ -184,8 +192,8 @@ export default {
     state.unsubscribes.forEach(unsubscribe => unsubscribe())
     commit('clearAllUnsubscribes')
   },
-  async unsubscribeAuthUserSnapshot({ state, commit }) {
-    if(state.authUserUnsubscribe) {
+  async unsubscribeAuthUserSnapshot ({ state, commit }) {
+    if (state.authUserUnsubscribe) {
       state.authUserUnsubscribe()
       commit('setAuthUserUnsubscribe', null)
     }

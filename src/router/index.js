@@ -41,10 +41,10 @@ const routes = [
     component: ThreadEdit,
     props: true
   }, {
-    path: '/profile',
+    path: '/me',
     name: 'Profile',
     component: Profile,
-    meta: { toTop: true, smoothScroll: true }
+    meta: { toTop: true, smoothScroll: true, requireAuth: true }
   }, {
     path: '/profile/edit',
     name: 'ProfileEdit',
@@ -61,6 +61,13 @@ const routes = [
     name: 'SignIn',
     component: SignIn
   }, {
+    path: '/logout',
+    name: 'SignOut',
+    async beforeEnter () {
+      await store.dispatch('signOut')
+      return { name: 'Home' }
+    }
+  }, {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: NotFound
@@ -76,8 +83,12 @@ const router = createRouter({
     return scroll
   }
 })
-router.beforeEach(() => {
+router.beforeEach(async (to, from) => {
+  await store.dispatch('initAuthentication')
   store.dispatch('unsubscribeAllSnapshots')
+  if (to.meta.requireAuth && !store.state.authId) {
+    return { name: 'Home' }
+  }
 })
 
 export default router

@@ -40,6 +40,19 @@ export default {
   methods: {
     save () {
       this.$emit('save', { ...this.form })
+      this.$emit('clean')
+    }
+  },
+  watch: {
+    form: {
+      handler (value) {
+        if (this.form.title !== this.title || this.form.text !== this.text) {
+          this.$emit('dirty')
+        } else {
+          this.$emit('clean')
+        }
+      },
+      deep: true
     }
   }
 }
