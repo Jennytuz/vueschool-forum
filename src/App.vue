@@ -2,7 +2,7 @@
   <div>
     <the-nav-bar />
     <div class="container">
-      <router-view v-show="showPage" @ready="onPageReady"/>
+      <router-view v-show="showPage" @ready="onPageReady" :key="$route.path"/>
       <AppSpin v-show="!showPage" class="push-top"/>
     </div>
   </div>
