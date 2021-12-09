@@ -10,6 +10,7 @@ import ThreadEdit from '@/pages/ThreadEdit'
 import Profile from '@/pages/Profile'
 import NotFound from '@/pages/NotFound'
 import store from '@/store'
+import { findById } from '@/helpers'
 const routes = [
   {
     path: '/',
@@ -29,16 +30,32 @@ const routes = [
     path: '/thread/:id',
     name: 'ThreadShow',
     component: ThreadShow,
-    props: true
+    props: true,
+    async beforeEnter (to, from, next) {
+      await store.dispatch('fetchThread', { id: to.params.id })
+      const threadExists = findById(store.state.threads, to.params.id)
+      if (threadExists) {
+        return next()
+      } else {
+        next({
+          name: 'NotFound',
+          params: { pathMatch: to.path.substring(1).split('/') },
+          query: to.query,
+          hash: to.hash
+        })
+      }
+    }
   }, {
     path: '/forum/:id/thread/create',
     name: 'ThreadCreate',
     component: ThreadCreate,
+    meta: { requireAuth: true },
     props: true
   }, {
     path: '/thread/:id/edit',
     name: 'ThreadEdit',
     component: ThreadEdit,
+    meta: { requireAuth: true },
     props: true
   }, {
     path: '/me',
@@ -46,9 +63,10 @@ const routes = [
     component: Profile,
     meta: { toTop: true, smoothScroll: true, requireAuth: true }
   }, {
-    path: '/profile/edit',
+    path: '/me/edit',
     name: 'ProfileEdit',
     component: Profile,
+    meta: { requireAuth: true },
     props: {
       edit: true
     }
