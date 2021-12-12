@@ -38,7 +38,7 @@ export default {
     }
   },
   async created () {
-    await this.$store.dispatch('fetchAllUsersPosts')
+    await this.$store.dispatch('fetchAuthUsersPosts')
     this.asyncDataStatus_fetched()
   }
 }

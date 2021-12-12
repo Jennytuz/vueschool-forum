@@ -2,7 +2,7 @@ import { upser, docToResource } from '@/helpers'
 
 export default {
   setItem (state, { resource, item }) {
-    upser(state[resource], docToResource(item))
+    upser(state[resource].items, docToResource(item))
   },
   appendUnsubscribe (state, { unsubscribe }) {
     state.unsubscribes.push(unsubscribe)

@@ -1,14 +1,15 @@
 import firebase from 'firebase'
 
 export default {
+  namespaced: true,
   state: {
     authId: null,
     authUserUnsubscribes: null,
     authObserverUnsubscribe: null
   },
   getters: {
-    authUser: (state, getters) => {
-      return getters.user(state.authId)
+    authUser: (state, getters, rootState, rootGetters) => {
+      return rootGetters['users/user'](state.authId)
     }
   },
   actions: {
@@ -44,7 +45,7 @@ export default {
     },
     async registerUserWithEmailAndPassword ({ dispatch }, { name, username, avatar = null, email, password }) {
       const result = await firebase.auth().createUserWithEmailAndPassword(email, password)
-      await dispatch('createUser', { id: result.user.uid, name, username, avatar, email })
+      await dispatch('users/createUser', { id: result.user.uid, name, username, avatar, email }, { root: true })
     },
     signInWithEmailAndPassword (context, { email, password }) {
       return firebase.auth().signInWithEmailAndPassword(email, password)
@@ -56,7 +57,7 @@ export default {
       const userRef = firebase.firestore().collection('users').doc(user.id)
       const userDoc = await userRef.get()
       if (!userDoc.exists) {
-        return dispatch('createUser', { id: user.uid, name: user.displayName, email: user.email, username: user.email, avatar: user.photoUrl })
+        return dispatch('users/createUser', { id: user.uid, name: user.displayName, email: user.email, username: user.email, avatar: user.photoUrl }, { root: true })
       } else {
         return dispatch('fetchAuthUser')
       }
@@ -64,6 +65,12 @@ export default {
     async signOut ({ commit }) {
       await firebase.auth().signOut()
       commit('setAuthId', null)
+    },
+    async fetchAllUsersPosts ({ commit, state }) {
+      const posts = await firebase.firestore().collection('posts').where('userId', '==', state.authId).get()
+      posts.forEach(item => {
+        commit('setItem', { resource: 'posts', item }, { root: true })
+      })
     }
   },
   mutations: {
