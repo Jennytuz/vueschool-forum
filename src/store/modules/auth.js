@@ -13,6 +13,12 @@ export default {
     }
   },
   actions: {
+    async unsubscribeAuthUserSnapshot ({ state, commit }) {
+      if (state.authUserUnsubscribe) {
+        state.authUserUnsubscribe()
+        commit('setAuthUserUnsubscribe', null)
+      }
+    },
     fetchAuthUser: async ({ dispatch, commit, state }) => {
       const userId = firebase.auth().currentUser?.uid
       if (!userId) return
@@ -23,7 +29,7 @@ export default {
         handleUnsubscribe: (unsubscribe) => {
           commit('setAuthUserUnsubscribe', unsubscribe)
         }
-      })
+      }, { root: true })
       commit('setAuthId', userId)
     },
     initAuthentication ({ dispatch, commit, state }) {

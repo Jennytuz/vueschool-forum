@@ -1,5 +1,6 @@
 import { createStore } from 'vuex'
 import actions from '@/store/actions'
+import mutations from '@/store/mutations'
 import categories from './modules/categories'
 import threads from './modules/threads'
 import forums from './modules/forums'
@@ -19,5 +20,6 @@ export default createStore({
   state: {
     unsubscribes: []
   },
-  actions
+  actions,
+  mutations
 })

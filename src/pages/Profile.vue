@@ -29,7 +29,7 @@ export default {
   components: { PostList, UserProfileCard, UserProfileCardEditor },
   mixins: [asyncDataStatus],
   computed: {
-    ...mapGetters({ user: 'authUser' })
+    ...mapGetters('auth', { user: 'authUser' })
   },
   props: {
     edit: {
@@ -38,7 +38,7 @@ export default {
     }
   },
   async created () {
-    await this.$store.dispatch('fetchAuthUsersPosts')
+    await this.$store.dispatch('auth/fetchAuthUsersPosts')
     this.asyncDataStatus_fetched()
   }
 }

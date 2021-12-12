@@ -35,7 +35,7 @@
                 <router-link :to="{name: 'Profile'}">View profile</router-link>
               </li>
               <li class="dropdown-menu-item">
-                <a @click="$store.dispatch('signOut')" href="">Sign Out</a>
+                <a @click="$store.dispatch('auth/signOut')" href="">Sign Out</a>
               </li>
             </ul>
           </div>
@@ -75,7 +75,7 @@
 import { mapGetters } from 'vuex'
 export default {
   computed: {
-    ...mapGetters(['authUser'])
+    ...mapGetters('auth', ['authUser'])
   },
   data () {
     return {

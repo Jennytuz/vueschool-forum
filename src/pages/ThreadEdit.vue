@@ -32,7 +32,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['updateThread', 'fetchThread', 'fetchPost']),
+    ...mapActions('threads', ['updateThread', 'fetchThread']),
+    ...mapActions('posts', ['fetchPost']),
     async save ({ title, text }) {
       await this.updateThread({
         text,

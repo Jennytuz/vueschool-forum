@@ -27,8 +27,8 @@ export default {
     }
   },
   actions: {
-    async createThread ({ commit, state, dispatch }, { text, title, forumId }) {
-      const userId = state.authId
+    async createThread ({ commit, state, dispatch, rootState }, { text, title, forumId }) {
+      const userId = rootState.auth.authId
       const publishedAt = firebase.firestore.FieldValue.serverTimestamp()
       const batch = firebase.firestore().batch()
       const threadRef = firebase.firestore().collection('threads').doc()
@@ -50,9 +50,9 @@ export default {
       commit('users/appendThreadToUser', { childId: newThread.id, parentId: userId }, { root: true })
       return state.items.find(thread => thread.id === newThread.id)
     },
-    async updateThread ({ commit, state }, { text, title, threadId }) {
+    async updateThread ({ commit, state, rootState }, { text, title, threadId }) {
       const thread = findById(state.items, threadId)
-      const post = state.posts.find(post => post.id === thread.posts[0])
+      const post = findById(rootState.posts.items, thread.posts[0])
       let newThread = { ...thread, title }
       let newPost = {
         ...post,

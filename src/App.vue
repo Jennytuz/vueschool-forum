@@ -17,7 +17,7 @@ export default {
   components: { TheNavBar, AppSpin },
   name: 'App',
   methods: {
-    ...mapActions(['fetchAuthUser']),
+    ...mapActions('auth', ['fetchAuthUser']),
     onPageReady () {
       this.showPage = true
       NPrpgress.done()

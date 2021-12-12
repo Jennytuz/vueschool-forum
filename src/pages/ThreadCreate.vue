@@ -23,7 +23,7 @@ export default {
   },
   computed: {
     forum () {
-      return this.$store.state.forums.find(forum => forum.id === this.forumId)
+      return this.$store.state.forums.items.find(forum => forum.id === this.forumId)
     }
   },
   data () {
@@ -32,7 +32,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['createThread', 'fetchForum']),
+    ...mapActions('threads', ['createThread']),
+    ...mapActions('forums', ['fetchForum']),
     async save ({ title, text }) {
       const thread = await this.createThread({
         text,

@@ -32,8 +32,8 @@ const routes = [
     component: ThreadShow,
     props: true,
     async beforeEnter (to, from, next) {
-      await store.dispatch('fetchThread', { id: to.params.id })
-      const threadExists = findById(store.state.threads, to.params.id)
+      await store.dispatch('threads/fetchThread', { id: to.params.id })
+      const threadExists = findById(store.state.threads.items, to.params.id)
       if (threadExists) {
         return next()
       } else {
@@ -46,7 +46,7 @@ const routes = [
       }
     }
   }, {
-    path: '/forum/:id/thread/create',
+    path: '/forum/:forumId/thread/create',
     name: 'ThreadCreate',
     component: ThreadCreate,
     meta: { requireAuth: true },
@@ -84,7 +84,7 @@ const routes = [
     path: '/logout',
     name: 'SignOut',
     async beforeEnter () {
-      await store.dispatch('signOut')
+      await store.dispatch('auth/signOut')
       return { name: 'Home' }
     }
   }, {
@@ -104,12 +104,12 @@ const router = createRouter({
   }
 })
 router.beforeEach(async (to, from) => {
-  await store.dispatch('initAuthentication')
+  await store.dispatch('auth/initAuthentication')
   store.dispatch('unsubscribeAllSnapshots')
-  if (to.meta.requireAuth && !store.state.authId) {
+  if (to.meta.requireAuth && !store.state.auth.authId) {
     return { name: 'SignIn', query: { redirectTo: to.path } }
   }
-  if (to.meta.requiresGuest && store.state.authId) {
+  if (to.meta.requiresGuest && store.state.auth.authId) {
     return { name: 'Home' }
   }
 })

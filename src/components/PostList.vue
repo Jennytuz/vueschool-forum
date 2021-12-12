@@ -21,7 +21,7 @@
           <p v-else>{{post.text}}</p>
         </div>
         <a
-          v-if="post.userId === $store.state.authId"
+          v-if="post.userId === $store.state.auth.authId"
           @click.prevent="toggleEditMode(post.id)"
           href="#" style="margin-left: auto;padding-left: 12px" class="link-unstyled" title="Make a change">
           <fa icon="pencil-alt" />
@@ -52,13 +52,13 @@ export default {
   },
   computed: {
     users () {
-      return this.$store.state.users
+      return this.$store.state.users.items
     }
   },
   methods: {
-    ...mapActions(['updatePost']),
+    ...mapActions('posts', ['updatePost']),
     getUser (userId, rtn) {
-      return this.$store.getters.user(userId) ? this.$store.getters.user(userId)[rtn] : {}
+      return this.$store.getters['users/user'](userId) ? this.$store.getters['users/user'](userId)[rtn] : {}
     },
     toggleEditMode (id) {
       this.editing = id === this.editing ? null : id
