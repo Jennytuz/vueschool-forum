@@ -15,7 +15,7 @@ export default {
           ...user,
           // authUser.posts
           get posts () {
-            return rootState.posts.item.filter(post => post.userId === user.id)
+            return rootState.posts.items.filter(post => post.userId === user.id)
           },
           get postsCount () {
             return user.postsCount || 0
