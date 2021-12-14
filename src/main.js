@@ -7,6 +7,7 @@ import firebaseConfig from '@/config/firebase'
 import FontAwesome from '@/plugins/FontAwesome'
 import ClickOutsideDirective from '@/plugins/ClickOutsideDirective'
 import PageScrollDirective from '@/plugins/PageScrollDirective'
+import Vue3Pagination from '@/plugins/Vue3Pagination'
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 // Initialize Firebase
@@ -30,5 +31,6 @@ forumApp.use(store)
 forumApp.use(FontAwesome)
 forumApp.use(ClickOutsideDirective)
 forumApp.use(PageScrollDirective)
+forumApp.use(Vue3Pagination)
 
 forumApp.mount('#app')
