@@ -71,7 +71,7 @@ export default {
       commit('setItem', { resource: 'posts', item: docToResource(newPost) }, { root: true })
       return newThread
     },
-    fetchThread: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'threads', id, emoji: 'Thread:::' }, { root: true }),
+    fetchThread: ({ dispatch }, { id, once = false }) => dispatch('fetchItem', { resource: 'threads', id, emoji: 'Thread:::', once }, { root: true }),
     fetchThreads: ({ dispatch }, { ids }) => dispatch('fetchItems', { resource: 'threads', ids, emoji: 'Threads:::' }, { root: true }),
     fetchThreadsByPage: ({ dispatch, commit }, { ids, page, perPage = 10 }) => {
       commit('clearThreads')

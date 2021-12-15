@@ -2,7 +2,7 @@
   <div>
     <the-nav-bar />
     <div class="container">
-      <router-view v-show="showPage" @ready="onPageReady" :key="`${$route.path}${JSON.stringify($route.query)}`"/>
+      <router-view v-show="showPage" @ready="onPageReady" :key="$route.fullPath"/>
       <AppSpin v-show="!showPage" class="push-top"/>
     </div>
   </div>
