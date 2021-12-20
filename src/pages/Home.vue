@@ -8,6 +8,7 @@
 import CategoryList from '@/components/CategoryList'
 import { mapActions } from 'vuex'
 import asyncDataStatus from '@/mixins/asyncDataStatus'
+import _ from '@/helpers/underscore'
 
 export default {
   components: { CategoryList },
