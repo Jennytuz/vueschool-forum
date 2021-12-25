@@ -22,23 +22,26 @@ class LRUCache {
     let node = this.hashTable[key]
     if (node == null) return -1
     this.moveToHead(node)
+    console.log(node.value)
     return node.value
   }
 
   put(key, value) {
     let node = this.hashTable[key]
     if (node == null) {
-      let newNode = new ListNode(key, value)
-      this.hashTable[key] = value
-      this.addToHead(newNode)
-      this.count ++
-      if (this.count > this.capacity) {
+      if (this.count == this.capacity) {
         this.removeLRUItem()
       }
+      let newNode = new ListNode(key, value)
+      this.hashTable[key] = newNode
+      this.addToHead(newNode)
+      this.count ++
+      
     } else {
       node.value = value
       this.moveToHead(node)
     }
+    console.log(key, this.hashTable[key].value)
   }
 
   moveToHead(node) {
@@ -72,3 +75,11 @@ class LRUCache {
     return tailItem
   }
 }
+
+var lRUCache = new LRUCache(2);
+lRUCache.put(2, 1); // 缓存是 {1=1}
+lRUCache.put(2, 2); // 缓存是 {1=1, 2=2}
+lRUCache.get(1);    // 返回 1
+lRUCache.put(1, 1); // 该操作会使得关键字 2 作废，缓存是 {1=1, 3=3}
+lRUCache.put(4, 1);
+lRUCache.get(2);    // 返回 -1 (未找到)
