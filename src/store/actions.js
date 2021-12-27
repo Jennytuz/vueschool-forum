@@ -1,7 +1,8 @@
 import firebase from 'firebase'
+import { findById } from '@/helpers'
 
 export default {
-  fetchItem ({ commit }, { id, emoji, resource, handleUnsubscribe = null, once = false }) {
+  fetchItem ({ state, commit }, { id, emoji, resource, handleUnsubscribe = null, once = false, onSnapshot = null }) {
     return new Promise((resolve) => {
       const unsubscribe = firebase
         .firestore()
@@ -14,7 +15,13 @@ export default {
           }
           if (doc.exists) {
             const item = { ...doc.data(), id: doc.id }
-            commit('setItem', { resource, id, item })
+            let previousItem = findById(state[resource].items, id)
+            previousItem = previousItem ? { ...previousItem } : null
+            commit('setItem', { resource, item })
+            if (typeof onSnapshot === 'function') {
+              const isLocal = doc.metadata.hasPendingWrites
+              onSnapshot({ item: { ...item }, previousItem, isLocal })
+            }
             resolve(item)
           } else {
             resolve(null)
@@ -27,8 +34,10 @@ export default {
       }
     })
   },
-  fetchItems ({ dispatch }, { ids, emoji, resource }) {
-    return Promise.all(ids.map(id => dispatch('fetchItem', { id, emoji, resource })))
+  fetchItems ({ dispatch }, { ids, emoji, resource, onSnapshot = null }) {
+    return Promise.all(ids.map(id =>
+      dispatch('fetchItem', { id, emoji, resource, onSnapshot })
+    ))
   },
   async unsubscribeAllSnapshots ({ state, commit }) {
     state.unsubscribes.forEach(unsubscribe => unsubscribe())
