@@ -6,9 +6,9 @@
     this.wrapper = data
   }
 
-  //开启流式编程
+  // 开启流式编程
   _.chain = function (source) {
-    var instance = _(source) //特殊实例对象
+    var instance = _(source) // 特殊实例对象
     instance._chain = true
     return instance
   }
@@ -16,7 +16,7 @@
     return this.wrapper
   }
   var module = function (instance, outcome) {
-    if(instance._chain) {
+    if (instance._chain) {
       instance.wrapper = outcome
       return instance
     }

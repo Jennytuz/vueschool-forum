@@ -34,6 +34,7 @@ import PostEditor from '@/components/PostEditor'
 import AppDate from '@/components/AppDate.vue'
 import { mapActions, mapGetters } from 'vuex'
 import asyncDataStatus from '@/mixins/asyncDataStatus'
+import useNotifications from '@/composables/useNotifications'
 
 export default {
   name: 'ThreadShow',
@@ -45,6 +46,10 @@ export default {
     }
   },
   components: { PostList, PostEditor, AppDate },
+  setup () {
+    const { addNotification } = useNotifications()
+    // addNotification({ message: 'new one' })
+  },
   data () {
     return {}
   },
