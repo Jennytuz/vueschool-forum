@@ -12,7 +12,9 @@
       <div class="middle bar"></div>
       <div class="bottom bar"></div>
     </div>
-
+    <div class="dropdown-menu-item">
+                <a @click="$store.dispatch('auth/signOut'), $router.push({ name: 'Home' })" href="">Sign Out</a>
+              </div>
     <!-- use .navbar-open to open nav -->
     <nav class="navbar" :class="{'navbar-open': mobileNavMenu}">
       <ul>
@@ -28,7 +30,6 @@
               <img class="icon-profile" src="assets/img/svg/arrow-profile.svg" alt />
             </span>
           </a>
-
           <!-- dropdown menu -->
           <!-- add class "active-drop" to show the dropdown -->
           <div id="user-dropdown" :class="{'active-drop': userDropdownOpen}">
